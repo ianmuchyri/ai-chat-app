@@ -1,13 +1,15 @@
+import { getCookies } from "@/lib/cookies";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import OpenAI from "openai";
 
-const token = process.env.OPENAI_API_KEY;
 const endpoint = "https://models.github.ai/inference";
-const model = "gpt-4o-mini";
-const client = new OpenAI({ baseURL: endpoint, apiKey: token });
+
 export const runtime = "edge";
 
 export async function POST(req: Request) {
+  const { model, apiKey } = await getCookies();
+  const client = new OpenAI({ baseURL: endpoint, apiKey: apiKey });
+
   const { messages } = await req.json();
 
   const response = await client.chat.completions.create({
